@@ -14,12 +14,13 @@ interface Props {
 
 export const MessageBubble: React.FC<Props> = ({ message }) => {
   const handleSpeech = () => {
-    Tts.stop(); // Always stop current audio first
-    const cleanText = message.text.replace(/🔍.*?(\n|$)/g, '').replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '$1').trim();
-    if (cleanText.length > 0) {
-      Tts.setDefaultLanguage('tr-TR');
-      Tts.setDefaultRate(0.5);
-      Tts.speak(cleanText);
+    try {
+      const cleanText = message.text.replace(/🔍.*?(\n|$)/g, '').replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '$1').trim();
+      if (cleanText.length > 0) {
+        Tts.speak(cleanText);
+      }
+    } catch (e) {
+      console.warn("TTS speak error", e);
     }
   };
 

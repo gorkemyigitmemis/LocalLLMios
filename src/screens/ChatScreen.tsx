@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MessageBubble, Message } from '../components/MessageBubble';
 import { ChatInput } from '../components/ChatInput';
 import { performWebSearch } from '../utils/searchEngine';
+import Tts from 'react-native-tts';
 
 export const ChatScreen: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,6 +44,19 @@ Aisistan: [SEARCH: site:akakce.com Samsung S24 fiyat]`;
 
   useEffect(() => {
     loadHistory();
+    try {
+      Tts.getInitStatus().then(() => {
+        Tts.setDefaultLanguage('tr-TR');
+        Tts.setDefaultRate(0.5);
+      }).catch(err => {
+        if (err.code === 'no_engine') {
+          Tts.requestInstallEngine();
+        }
+      });
+    } catch (e) {
+      console.warn("TTS initialization error", e);
+    }
+    
     return () => {
       if (llamaContext) {
         llamaContext.release();
