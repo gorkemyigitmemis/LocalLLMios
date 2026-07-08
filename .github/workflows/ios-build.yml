@@ -55,6 +55,8 @@ jobs:
 
           mkdir Payload
           cp -r build/Build/Products/Release-iphoneos/LocalLLMios.app Payload/
+          cp ios/main.jsbundle Payload/LocalLLMios.app/
+          if [ -d "ios/assets" ]; then cp -r ios/assets Payload/LocalLLMios.app/; fi
           zip -r LocalLLMios.ipa Payload
 
       - name: Upload IPA Artifact
