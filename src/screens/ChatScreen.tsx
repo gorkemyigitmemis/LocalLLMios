@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Text, ActivityIndicator, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { initLlama, LlamaContext } from 'llama.rn';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MessageBubble, Message } from '../components/MessageBubble';
 import { ChatInput } from '../components/ChatInput';
 import { performWebSearch } from '../utils/searchEngine';
@@ -32,6 +33,7 @@ Kullanıcı: Galatasaray son maçını kimle oynadı?
 Sen: [SEARCH: Galatasaray son maçı sonucu]`;
 
   useEffect(() => {
+    loadHistory();
     return () => {
       if (llamaContext) {
         llamaContext.release();
@@ -39,9 +41,45 @@ Sen: [SEARCH: Galatasaray son maçı sonucu]`;
     };
   }, [llamaContext]);
 
+  // Geçmişi kaydetme
+  useEffect(() => {
+    const saveState = async () => {
+      try {
+        await AsyncStorage.setItem('@messages', JSON.stringify(messages));
+        await AsyncStorage.setItem('@conversation', JSON.stringify(conversation));
+      } catch (e) {
+        console.warn("Geçmiş kaydedilemedi", e);
+      }
+    };
+    saveState();
+  }, [messages, conversation]);
+
+  const loadHistory = async () => {
+    try {
+      const savedMessages = await AsyncStorage.getItem('@messages');
+      const savedConv = await AsyncStorage.getItem('@conversation');
+      if (savedMessages) setMessages(JSON.parse(savedMessages));
+      if (savedConv) setConversation(JSON.parse(savedConv));
+    } catch (e) {
+      console.warn("Geçmiş yüklenemedi", e);
+    }
+  };
+
+  const clearHistory = () => {
+    Alert.alert("Emin misiniz?", "Tüm sohbet geçmişi cihazınızdan kalıcı olarak silinecektir.", [
+      { text: "İptal", style: "cancel" },
+      { text: "Sil", style: "destructive", onPress: async () => {
+        setMessages([]);
+        setConversation([]);
+        await AsyncStorage.removeItem('@messages');
+        await AsyncStorage.removeItem('@conversation');
+      }}
+    ]);
+  };
+
   const loadModel = async (modelPath: string) => {
     try {
-      setLoadingText('Model belleğe alınıyor...');
+      setLoadingText('Model belleğe alınıyor...\n(Gemma 2B)');
       const context = await initLlama({
         model: modelPath,
         use_mlock: true,
@@ -70,7 +108,7 @@ Sen: [SEARCH: Galatasaray son maçı sonucu]`;
       }
 
       setIsModelLoading(true);
-      setLoadingText('Model kopyalanıyor (Bu işlem biraz sürebilir)...');
+      setLoadingText('Ağırlıklar Kopyalanıyor\n(Bu işlem biraz sürebilir)...');
 
       const destPath = `${RNFS.DocumentDirectoryPath}/${res.name}`;
       const exists = await RNFS.exists(destPath);
@@ -213,86 +251,140 @@ Sen: [SEARCH: Galatasaray son maçı sonucu]`;
     return (
       <View style={styles.loadingContainer}>
         {isModelLoading ? (
-          <>
-            <ActivityIndicator size="large" color="#007AFF" />
+          <View style={styles.glassCard}>
+            <ActivityIndicator size="large" color="#0A84FF" />
             <Text style={styles.loadingText}>{loadingText}</Text>
-          </>
+          </View>
         ) : (
-          <>
-            <Text style={styles.welcomeText}>Yerel LLM Sohbetine Hoş Geldiniz</Text>
-            <Text style={styles.subText}>Başlamak için cihazınızdan bir .gguf modeli seçin.</Text>
-            <TouchableOpacity style={styles.button} onPress={handleSelectModel}>
-              <Text style={styles.buttonText}>Model Seç (Import GGUF)</Text>
+          <View style={styles.glassCard}>
+            <Text style={styles.welcomeTitle}>Antigravity AI</Text>
+            <Text style={styles.subText}>Cihazınızda çalışan, çevrimdışı ve gizlilik odaklı süper asistanınıza hoş geldiniz.</Text>
+            <TouchableOpacity style={styles.premiumButton} onPress={handleSelectModel}>
+              <Text style={styles.premiumButtonText}>GGUF Modeli Yükle</Text>
             </TouchableOpacity>
-          </>
+          </View>
         )}
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <MessageBubble message={item} />}
-        contentContainerStyle={styles.listContent}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
-      />
-      <ChatInput onSend={handleSend} disabled={isStreaming} />
-    </KeyboardAvoidingView>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        style={styles.container} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Gemma 2 Asistan</Text>
+          <TouchableOpacity onPress={clearHistory} style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>🗑️ Temizle</Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <MessageBubble message={item} />}
+          contentContainerStyle={styles.listContent}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        />
+        <ChatInput onSend={handleSend} disabled={isStreaming} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F2F2F7', // iOS background
+  },
   container: {
     flex: 1,
-    backgroundColor: '#EFEFEF',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: 'rgba(242, 242, 247, 0.9)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1C1C1E',
+  },
+  clearButton: {
+    padding: 8,
+    backgroundColor: '#FF3B3015',
+    borderRadius: 20,
+  },
+  clearButtonText: {
+    fontSize: 14,
+    color: '#FF3B30',
+    fontWeight: '600',
   },
   listContent: {
     paddingVertical: 15,
+    paddingHorizontal: 5,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 20,
+    backgroundColor: '#000000', // Modern Dark background
   },
-  welcomeText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'center',
+  glassCard: {
+    width: '85%',
+    padding: 30,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    alignItems: 'center',
+  },
+  welcomeTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 15,
+    letterSpacing: 0.5,
   },
   subText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 15,
+    color: '#EBEBF590',
     textAlign: 'center',
     marginBottom: 30,
+    lineHeight: 22,
   },
   loadingText: {
     marginTop: 20,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#FFFFFF',
     textAlign: 'center',
+    lineHeight: 22,
   },
-  button: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
+  premiumButton: {
+    backgroundColor: '#0A84FF',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+    shadowColor: '#0A84FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  buttonText: {
-    color: '#FFF',
+  premiumButtonText: {
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });
