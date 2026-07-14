@@ -34,8 +34,6 @@ GÜNCEL VERİ VE BİLGİ İHTİYACINDA AŞAĞIDAKİ ARAÇLARI (TOOLS) KULLAN:
 2. SİTE OKUMAK İÇİN: Eğer detaylı bir metin, haber, wikipedia okuman gerekiyorsa veya arama sonucundaki bir siteye girip içeriğini kazıman gerekiyorsa şu JSON'u döndür:
 {"action": "read_site", "url": "https://..."}
 
-DİKKAT: Kullanıcıya asla sadece "Bu siteden bakabilirsiniz" diyerek link atma! Arama sonuçlarındaki verileri kullanarak GEREKLİ TÜM BİLGİLERİ (Özellikler, fiyat vs.) DOĞRUDAN SEN YAZ. Müşteriyi siteye yollama, bilgiyi sen ver.
-
 3. TELEFON YÖNETİMİ İÇİN (SYSTEM INTENT): Eğer kullanıcı birini aramak, mesaj atmak, web sitesi açmak veya telefonun bir yerel özelliğini kullanmak istiyorsa şu formatta çıktı ver:
 {"action": "intent", "url": "sms:1234567890"} veya {"action": "intent", "url": "tel:1234567890"} veya {"action": "intent", "url": "https://..."}
 
@@ -44,7 +42,7 @@ DİKKAT: Kullanıcıya asla sadece "Bu siteden bakabilirsiniz" diyerek link atma
 
 KURALLAR:
 1. JSON döndürdüğünde başka HİÇBİR metin yazma.
-2. Eğer araçlardan gelen veriyi aldıysan DOĞRUDAN doğal dille Türkçe cevap ver.
+2. EĞER BİR BİLGİ BULDUYSAN: KESİNLİKLE "Şu siteden bakabilirsiniz" VEYA "Detaylar linkte" DEME. BÜTÜN BİLGİLERİ (Özellikler, fiyatlar, tarihler) BİZZAT KENDİN ÇIKARIP MADDELER HALİNDE YAZ.
 3. Fiyat soruluyorsa: {"action": "search", "query": "cimri ürün adı fiyat"}
 4. Hava durumu soruluyorsa: {"action": "search", "query": "Şehir Adı 20 Temmuz hava durumu derece"}
 5. Harita önermek için markdown link kullan: [Haritada Gör](https://maps.google.com/?q=Yer+Adı)
@@ -210,7 +208,7 @@ Aisistan: {"action": "read_site", "url": "https://tr.wikipedia.org/wiki/Kara_del
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nDaha fazla veriye ihtiyacın varsa site okuyabilirsin (read_site). EĞER YETERLİYSE, KULLANICIYA ASLA SADECE LİNK ATMA. Lütfen bulduğun tüm teknik özellikleri, fiyatı vs. MADDELER HALİNDE KENDİN YAZ. KURALLAR:\n1. Kaynaklarda belirtilen (URL) adreslerini kullanarak tıklanabilir linkler oluştur.\n2. Fiyat soruluyorsa, arama sonuçlarındaki aşırı ucuz fiyatların telefon kılıfı olabileceğini unutma.\n3. Gerekliyse {"action": "read_site", "url": "..."} aracıyla bir siteyi kazı.` }
+                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV: Yukarıdaki sonuçlardan kullanıcının sorusuna cevap olan BÜTÜN bilgileri (özellikler, fiyat vb.) KENDİN ÇIKARIP MADDELER HALİNDE YAZ. Kullanıcıya "Şu siteden araştırabilirsin" veya "Linke tıkla" demek KESİNLİKLE YASAKTIR. Bilgiyi BİZZAT SEN SUNACAKSIN. Yetersizse {"action": "read_site", "url": "..."} aracını kullan.` }
               ];
               continue; // Ajan döngüye devam etsin
             } 
