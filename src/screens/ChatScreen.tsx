@@ -270,7 +270,7 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV:\n1. Eğer sonuçlarda yeterli bilgi VARSA, bunları BİZZAT KENDİN MADDELER HALİNDE YAZ.\n2. Eğer bilgi YETERSİZSE, SADECE şu formatta JSON döndür:\n{"action": "read_site", "url": "girmek_istediğin_link"}\n\nDİKKAT:\nCihaz veya araç özelliği listeliyorsan TÜRÜNE GÖRE ŞU FORMATLARI KULLAN:\n[TELEFON/TABLET]: Ekran (inç), İşlemci, Batarya (mAh), Kamera (MP)\n[ARABA]: Motor, Güç (hp), Tork (Nm), Kapasite, 0-100\n[MONİTÖR/TV]: Boyut (inç), Çözünürlük, Yenileme Hızı (Hz), Panel, Tepki Süresi (ms)\n[BİLGİSAYAR/LAPTOP]: İşlemci, RAM, Depolama (SSD), Ekran Kartı\n[BEYAZ EŞYA]: Enerji Sınıfı, Kapasite (L/Kg), Boyut, Ses (dB)\n[AKILLI SAAT]: Ekran, Batarya Ömrü, Sensörler, Su Geçirmezlik\n[KULAKLIK]: Tip, Sürücü (mm), Batarya, ANC\n[KAMERA]: Sensör (MP), Video Çözünürlüğü, ISO, Ağırlık\n[KLİMA]: Kapasite (BTU), Isıtma/Soğutma Sınıfı, Ses\n[OYUN KONSOLU]: CPU/GPU, RAM, Depolama, Çıkış Çözünürlüğü (4K)\n\nFiyatı da en alta ekle. Diğer cihazlar için de en önemli 5 veriyi listele.` }
+                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV:\n1. Eğer sonuçlarda yeterli bilgi VARSA, bunları BİZZAT KENDİN MADDELER HALİNDE YAZ.\n2. Eğer bilgi YETERSİZSE, SADECE şu formatta JSON döndür:\n{"action": "read_site", "url": "girmek_istediğin_link"}\n\nDİKKAT:\nCihaz veya araç özelliği listeliyorsan TÜRÜNE GÖRE ŞU FORMATLARI KULLAN:\n[TELEFON]: Ekran, İşlemci, Batarya, Kamera\n[ARABA]: Motor, Güç, Tork, Kapasite, 0-100\n[DİĞER CİHAZLAR]: En önemli 5 teknik veri.\nFiyatı da en alta ekle.` }
               ];
               continue; // Ajan döngüye devam etsin
             } 
@@ -292,7 +292,7 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `[${actionData.url}] sitesinden en ilgili metinler:\n\n${relevantChunk}\n\nÖNEMLİ GÖREV: SAYISAL VERİLERİ koruyarak MADDELER HALİNDE ÖZETLE. 'Çok güçlü' gibi yuvarlak cümleler YASAKTIR.\n\nCihaz özelliği listeliyorsan TÜRÜNE GÖRE ŞU FORMATLARI KULLAN:\n[TELEFON/TABLET]: Ekran (inç), İşlemci, Batarya (mAh), Kamera (MP)\n[ARABA]: Motor, Güç (hp), Tork (Nm), Kapasite, 0-100\n[MONİTÖR/TV]: Boyut (inç), Çözünürlük, Yenileme Hızı (Hz), Panel, Tepki Süresi (ms)\n[BİLGİSAYAR/LAPTOP]: İşlemci, RAM, Depolama (SSD), Ekran Kartı\n[BEYAZ EŞYA]: Enerji Sınıfı, Kapasite (L/Kg), Boyut, Ses (dB)\n[AKILLI SAAT]: Ekran, Batarya Ömrü, Sensörler, Su Geçirmezlik\n[KULAKLIK]: Tip, Sürücü (mm), Batarya, ANC\n[KAMERA]: Sensör (MP), Video Çözünürlüğü, ISO, Ağırlık\n[KLİMA]: Kapasite (BTU), Isıtma/Soğutma Sınıfı, Ses\n[OYUN KONSOLU]: CPU/GPU, RAM, Depolama, Çıkış Çözünürlüğü (4K)\n\nFiyatı da en alta ekle.` }
+                { role: 'System', text: `[${actionData.url}] sitesinden en ilgili metinler:\n\n${relevantChunk}\n\nÖNEMLİ GÖREV: SAYISAL VERİLERİ koruyarak MADDELER HALİNDE ÖZETLE.\n\nCihaz özelliği listeliyorsan TÜRÜNE GÖRE ŞU FORMATLARI KULLAN:\n[TELEFON]: Ekran, İşlemci, Batarya, Kamera\n[ARABA]: Motor, Güç, Tork, Kapasite, 0-100\n[DİĞER]: En önemli 5 teknik veri.\nFiyatı da en alta ekle.` }
               ];
               continue; // Ajan döngüye devam etsin
             }
