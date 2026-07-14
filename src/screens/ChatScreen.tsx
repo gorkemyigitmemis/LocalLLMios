@@ -208,7 +208,7 @@ Aisistan: {"action": "read_site", "url": "https://tr.wikipedia.org/wiki/Kara_del
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV: Yukarıdaki sonuçlardan kullanıcının sorusuna cevap olan BÜTÜN bilgileri (özellikler, fiyat vb.) KENDİN ÇIKARIP MADDELER HALİNDE YAZ. Kullanıcıya "Şu siteden araştırabilirsin" veya "Linke tıkla" demek KESİNLİKLE YASAKTIR. Bilgiyi BİZZAT SEN SUNACAKSIN. Yetersizse {"action": "read_site", "url": "..."} aracını kullan.` }
+                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV:\n1. Eğer sonuçlarda yeterli bilgi (örneğin teknik özellikler, fiyat) VARSA, bunları BİZZAT KENDİN MADDELER HALİNDE YAZ.\n2. Eğer sonuçlardaki bilgi YETERSİZSE, linkteki detayları okumak ZORUNDASIN. Siteyi okumak için SADECE şu formatta JSON döndür (başka tek kelime yazma):\n{"action": "read_site", "url": "girmek_istediğin_link"}\n\nDİKKAT: Kullanıcıya "Şu siteden bakabilirsiniz" demek KESİNLİKLE YASAKTIR.` }
               ];
               continue; // Ajan döngüye devam etsin
             } 
