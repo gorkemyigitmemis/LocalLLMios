@@ -165,7 +165,12 @@ ${persona ? `KULLANICI ÇEKİRDEK HAFIZASI:\n${persona}` : ''}`;
             else if (actionData.action === 'read_site' && actionData.url) {
               addLog(`Araç tetiklendi: Site Kazıma -> "${actionData.url}"`);
               const rawText = await scrapeWebsite(actionData.url);
-              const relevantChunk = chunkAndRetrieve(rawText, query, 8); // Safe with 4096 context window
+              
+              let ragQuery = query;
+              if (/(özellik|telefon|araba|kamera|batarya|ekran|işlemci|motor|fiyat)/i.test(query)) {
+                  ragQuery += " işlemci batarya ekran kamera ram tork beygir güç kapasite mah mp hz çözünürlük";
+              }
+              const relevantChunk = chunkAndRetrieve(rawText, ragQuery, 8); // Safe with 4096 context window
               
               // Hafızaya (SSD) kaydet
               await saveToMemory(actionData.url, relevantChunk);

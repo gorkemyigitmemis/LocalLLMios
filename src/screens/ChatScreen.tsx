@@ -275,7 +275,12 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               );
 
               const rawText = await scrapeWebsite(actionData.url);
-              const relevantChunk = chunkAndRetrieve(rawText, userQuery, 8); // Safe with 4096 context window
+              
+              let ragQuery = userQuery;
+              if (/(özellik|telefon|araba|kamera|batarya|ekran|işlemci|motor|fiyat)/i.test(userQuery)) {
+                  ragQuery += " işlemci batarya ekran kamera ram tork beygir güç kapasite mah mp hz çözünürlük";
+              }
+              const relevantChunk = chunkAndRetrieve(rawText, ragQuery, 8); // Safe with 4096 context window
               
               // Hafızaya (SSD) kaydet
               await saveToMemory(actionData.url, relevantChunk);
