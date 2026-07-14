@@ -15,12 +15,12 @@ export async function scrapeWebsite(url: string): Promise<string> {
 
     let html = await response.text();
     
-    // 1. Remove scripts, styles, and SVG tags completely
-    html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ' ');
-    html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ' ');
-    html = html.replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, ' ');
-    html = html.replace(/<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi, ' ');
-    html = html.replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, ' ');
+    // 1. Remove scripts, styles, and SVG tags completely (Fixed ReDoS vulnerability)
+    html = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ');
+    html = html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ');
+    html = html.replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, ' ');
+    html = html.replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, ' ');
+    html = html.replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, ' ');
     
     // 2. Strip all remaining HTML tags
     let extractedText = html.replace(/<[^>]+>/g, ' ');
