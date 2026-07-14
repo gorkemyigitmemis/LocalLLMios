@@ -271,7 +271,7 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV:\n1. Eğer sonuçlarda cihazın sorulan TEKNİK DETAYLARI tam olarak VARSA, MADDELER HALİNDE YAZ.\n2. Eğer detaylar EKSİKSE, boş şablon doldurmak, uydurmak veya "bilmiyorum" demek KESİNLİKLE YASAKTIR! Eksik bilgiyi bulmak için SADECE şu formatta JSON döndürerek linke girmelisin:\n{"action": "read_site", "url": "girmek_istediğin_link"}\n\nDİKKAT:\nEğer kullanıcı GENEL ÖZELLİKLERİ sorduysa ve bilgileri bulduysan ŞU FORMATI KULLAN:\n[TELEFON]: Ekran, İşlemci, Batarya, Kamera\n[ARABA]: Motor, Güç, Tork, Kapasite, 0-100\n[DİĞER]: En önemli 5 teknik veri.\n(Sadece spesifik bir şey sorulduysa, örneğin sadece fiyat, o zaman tüm listeyi yazmana gerek yok, sadece cevabı ver.)` }
+                { role: 'System', text: `Arama sonuçları:\n${searchResults}\n\nÖNEMLİ GÖREV:\n1. Eğer sonuçlarda cihazın sorulan TEKNİK DETAYLARI tam olarak VARSA, bunları BİZZAT KENDİN MADDELER HALİNDE YAZ.\n2. Eğer detaylar EKSİKSE, "bilmiyorum" veya "erişimim yok" demek KESİNLİKLE YASAKTIR! Eksik bilgiyi bulmak için SADECE şu formatta JSON döndürerek linke girmelisin:\n{"action": "read_site", "url": "girmek_istediğin_link"}\n\nDİKKAT: Cihaz özelliği yazarken şablonları kopyalama, sadece bulduğun net verileri (İşlemci: MediaTek vb.) alt alta yaz.` }
               ];
               continue; // Ajan döngüye devam etsin
             } 
@@ -298,7 +298,7 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               currentHistory = [
                 ...currentHistory,
                 { role: 'Assistant', text: stepResponse },
-                { role: 'System', text: `[${actionData.url}] sitesinden en ilgili metinler:\n\n${relevantChunk}\n\nÖNEMLİ GÖREV: SAYISAL VERİLERİ koruyarak cevap ver. Bulamadığın veri için boş şablon doldurma (örneğin İşlemci: yazıp boş bırakma).\n\nEğer kullanıcı GENEL ÖZELLİKLERİ sorduysa ŞU FORMATI KULLAN:\n[TELEFON]: Ekran, İşlemci, Batarya, Kamera\n[ARABA]: Motor, Güç, Tork, Kapasite, 0-100\n[DİĞER]: En önemli 5 teknik veri.\n(Eğer sadece fiyat gibi tek bir şey sorulduysa, şablonu boşverip sadece fiyatı yaz.)` }
+                { role: 'System', text: `[${actionData.url}] sitesinden en ilgili metinler:\n\n${relevantChunk}\n\nÖNEMLİ GÖREV: Sitedeki SAYISAL VERİLERİ ve teknik özellikleri koruyarak MADDELER HALİNDE YAZ. Sistem komutlarındaki şablonları ekrana kopyalama, sadece bulduğun gerçek verileri listele.` }
               ];
               continue; // Ajan döngüye devam etsin
             }
