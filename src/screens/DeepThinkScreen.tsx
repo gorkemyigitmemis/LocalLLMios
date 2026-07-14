@@ -149,7 +149,12 @@ ${persona ? `KULLANICI ÇEKİRDEK HAFIZASI:\n${persona}` : ''}`;
                 finalQuery += ' site:obilet.com OR site:enuygun.com OR site:turna.com';
               } else if (lowerQ.includes('fiyat') || lowerQ.includes('kaç tl') || lowerQ.includes('ne kadar')) {
                 finalQuery += ' site:cimri.com OR site:akakce.com';
+              } else if (lowerQ.includes('özellik') || lowerQ.includes('işlemci') || lowerQ.includes('batarya') || lowerQ.includes('teknik detay')) {
+                if (!lowerQ.includes('araba') && !lowerQ.includes('motor') && !lowerQ.includes('beygir')) {
+                  finalQuery += ' site:epey.com';
+                }
               }
+              
               if (lowerQ.includes('hava') || lowerQ.includes('bugün')) {
                 finalQuery += ` ${new Date().toLocaleDateString('tr-TR')}`;
               }
