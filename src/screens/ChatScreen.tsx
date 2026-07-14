@@ -275,7 +275,7 @@ Aisistan: Pi (π) sayısı yaklaşık 3.14159'dur.`;
               );
 
               const rawText = await scrapeWebsite(actionData.url);
-              const relevantChunk = chunkAndRetrieve(rawText, userQuery, 3); // Zero-RAM RAG (Limit: 3 chunks to prevent OOM)
+              const relevantChunk = chunkAndRetrieve(rawText, userQuery, 8); // Safe with 4096 context window
               
               // Hafızaya (SSD) kaydet
               await saveToMemory(actionData.url, relevantChunk);
