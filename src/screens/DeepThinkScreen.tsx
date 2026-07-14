@@ -178,7 +178,7 @@ ${persona ? `KULLANICI ÇEKİRDEK HAFIZASI:\n${persona}` : ''}`;
               addLog(`Siteden en uygun veri parçaları koparıldı ve diske kaydedildi. (${relevantChunk.length} karakter)`);
 
               currentHistory.push({ role: 'Assistant', text: stepResponse });
-              currentHistory.push({ role: 'System', text: `[${actionData.url}] içerik özeti:\n${relevantChunk}\n\nÖNEMLİ GÖREV: Bu verilerdeki SAYISAL BİLGİLERİ, TEKNİK TERİMLERİ ve NET FİYATLARI koruyarak detaylı bir rapor sun. 'Çok iyi', 'harika' gibi yuvarlak kelimeler kullanma, analitik ol. 'Şu linke bak' demek YASAKTIR. Eğer araştırma bittiyse nihai raporunu SONUÇ: tagi ile yaz.` });
+              currentHistory.push({ role: 'System', text: `[${actionData.url}] sitesinden okunan metinler:\n\n${relevantChunk}\n\nÖNEMLİ GÖREV:\nSAYISAL VERİLERİ (fiyat, saat, teknik özellik) koruyarak detaylı bir şekilde raporla.\n(Bulamadığın veriler için boş liste yapma, sadece bulduğun net bilgileri yaz.)\n\nCihaz veya araç özelliği listeliyorsan ŞU FORMATLARI KULLAN:\n[TELEFON]: Ekran, İşlemci, Batarya, Kamera\n[ARABA]: Motor, Güç, Tork, Kapasite, 0-100\n[DİĞER]: En önemli 5 teknik veri.\n(Sadece spesifik bir şey sorulduysa, örneğin sadece fiyat, şablonu boşverip sadece fiyatı ver.)` });
               continue;
             }
             else if (actionData.action === 'search_memory' && actionData.query) {
