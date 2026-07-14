@@ -62,5 +62,5 @@ jobs:
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: LocalLLMios-IPA
+          name: artik son hal
           path: LocalLLMios.ipa
