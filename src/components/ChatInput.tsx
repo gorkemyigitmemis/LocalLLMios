@@ -101,9 +101,9 @@ export const ChatInput: React.FC<Props> = ({ onSend, disabled }) => {
           
           // Save to Zero-RAM SSD Memory
           await saveToMemory(`Dosya: ${res.name}`, content);
-          
-          // Send a tiny prompt to notify the agent
-          setText((prev) => prev + (prev.length > 0 ? '\n' : '') + `[SİSTEM: Kullanıcı SSD belleğine belge yükledi: ${res.name}. İçeriğe ulaşmak için 'search_memory' kullan.]`);
+          // Send a tiny prompt to notify the agent directly
+          const msg = `[SİSTEM: Kullanıcı SSD belleğine belge yükledi: ${res.name}. İçeriğe ulaşmak için 'search_memory' kullan.]`;
+          onSend(msg);
         } catch (err) {
           console.error("File Read Error", err);
         } finally {
